@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'social-media-autoloader'
+
+Parameters:
+  PostTableName:
+    Type: String
+  HashtagTableName:
+    Type: String
+  RecordsTableName:
+    Type: String
+  MEDIAURL:
+    Type: String
+  FBPAGEID:
+    Type: String
+  FBACCESSTOKEN:
+    Type: String
+  IGACCESSTOKEN:
+    Type: String
+  IGBUSINESSACCOUNT:
+    Type: String
+  TWITTERAPIKEY:
+    Type: String
+  TWITTERAPISECRET:
+    Type: String
+  PARAMETERNAMETWITTER:
+    Type: String
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        MEDIA_URL: !Ref MEDIAURL
+        FB_PAGEID: !Ref FBPAGEID
+        FB_ACCESS_TOKEN: !Ref FBACCESSTOKEN
+        IG_ACCESS_TOKEN: !Ref IGACCESSTOKEN
+        IG_BUSINESS_ACCOUNT: !Ref IGBUSINESSACCOUNT
+        TWITTER_API_KEY: !Ref TWITTERAPIKEY
+        TWITTER_API_SECRET: !Ref TWITTERAPISECRET
+        PARAMETER_NAME_TWITTER: !Ref PARAMETERNAMETWITTER
+        DYNAMODB_TABLE: !Ref PostTableName
+        DYNAMODB_TABLE_RECORDS: !Ref RecordsTableName
+        DYNAMODB_TABLE_HASHTAGS: !Ref HashtagTableName
+
+
+Resources:
+  PostTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref PostTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        -
+          AttributeName: "posttime"
+          AttributeType: "S"
+        -
+          AttributeName: "post_to"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "posttime"
+          KeyType: "HASH"
+        -
+          AttributeName: "post_to"
+          KeyType: "RANGE"
+      TimeToLiveSpecification:
+        AttributeName: posttime_epoch
+        Enabled: True
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+  HashtagTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref HashtagTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+
+  RecordsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref RecordsTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "site"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "site"
+          KeyType: "HASH"
+
+
+  SocialPostReloadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.lambdaHandler
+      Runtime: python3.9
+      Timeout: 300
+      MemorySize: 1024
+      Layers:
+        - 'arn:aws:lambda:us-east-1:643020469822:layer:twitterbot:1'
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: "*"
+      Events:
+        DynamoDBPost:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt PostTable.StreamArn
+            BatchSize: 10
+            StartingPosition: LATEST
+
+
+Outputs:
+  PostTable:
+    Description: API Gateway endpoint URL for Prod stage for Product function
+    Value: !Ref PostTableName
+  HashtagTable:
+    Description: API Gateway endpoint URL for Prod stage for Product function
+    Value: !Ref HashtagTableName
+  RecordsTable:
+    Description: API Gateway endpoint URL for Prod stage for Product function
+    Value: !Ref RecordsTableName
+
