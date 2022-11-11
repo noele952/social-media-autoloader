@@ -13,14 +13,11 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/Screenshot_20221028_051816.png" alt="Logo" width="220" height="100">
-  </a>
 
-<h3 align="center">Social Media Auto Loader</h3>
+<h3 align="center">Social Media Auto Loader AWS</h3>
 
   <p align="center">
-    <p>Scheduled upload and automated reposting for Twitter, Instagram, and Facebook, built with AWS services </p>
+    <p></p>
     <br />
     <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
     <br />
@@ -30,7 +27,7 @@
     <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
     ·
     <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
-  </p>
+  
 </div>
 
 
@@ -47,13 +44,6 @@
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
@@ -63,24 +53,30 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-Social media auto loader allows you to schedule post for Instagram, Facebook, and Twitter. It can handle posts including
-a picture, a gallery of pictures, or a video. 
+Social media auto loader allows you to schedule a post, and a repost one year from now, on Instagram, Facebook, or 
+Twitter. It can handle posts including a picture, a gallery of pictures, or a video. 
 
-Written in Python on the Flask web framework, with maps generated with folium, and graphs generated with plotly
+It works off of the DynamoDB Time To Live feature. The post date is used as the TTL. When the post expires the 
+DyanamoDB stream will trigger the Lambda function to post, and if marked repost it will put it back into the 
+post database
+
+It also includes a Hashtag table for instagram posts, where you can store a collection of hashtags assigned to a keyword,
+and then use those keywords to assign hashtags. If multiple keywords are used on a post, it
+will pull the top keywords from each group, up to a maximum of 30(the Instagram post limit).
 
 
 
+I also have a social-media-formatter, that can make sure all of your media is properly formatted.
+
+https://github.com/noele952/social-media-formatter
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+## Built With
 
-### Built With
+* ## <a href="https://aws.amazon.com/">AWS</a>
 
-* ## <a href="https://flask.palletsprojects.com/en/2.2.x/">Flask</a>
-* ## <a href="https://python-visualization.github.io/folium/">Folium</a>
-* ## <a href="https://plot.ly/export/">Plotly</a>
-Data provided by: https://data.seattle.gov/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -89,74 +85,10 @@ Data provided by: https://data.seattle.gov/
 <!-- GETTING STARTED -->
 ## Getting Started
 
-If you would like to run it locally, a Docker container is available.
-* docker
-  ```sh
-  docker pull noele952/seattle-data-final
-  ```
-  ```sh
-  docker run noele952/seattle-data-final
-  ```  
-   
+An AWS SAM template is included for deployment
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-<div align="center">
-<img src="images/Screenshot_20221028_051502.png" alt="Logo" width="600" >
-<p>On the landing page it has links to the four categories of mapped data
-<ul style="text-align:left;">
-<li>911 emergency call data</li>
-<li>crime report data</li>
-<li>building activity(permits, landuse, etc.)</li>
-<li>code violation reports</li>
-</ul>
-<p>If you enter in an address it will show you maps for all four categories based on the location provided. If you click
-the links instead it will load more general maps based on the category.</p>
-<img src="images/Screenshot_20221028_051136.png" alt="Logo" width="600">
-<p>Refine your map data based on neighborhood and/or specific type of incident. Click on the incident marker to see
-more information about the incident</p>
-<img src="images/Screenshot_20221028_050424.png" alt="Logo" width="600">
-<p>View the incident data in heatmap form.</p>
-<img src="images/Screenshot_20221028_051346.png" alt="Logo" width="600">
-<p>See the incident date broken down into an interactive "sunburst" graph.</p>
-
-</div>
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] automatic email notification of post failures
-- [ ] automated video formatting
-- [ ] monthly reposting option
-- [ ] automated daily log reports
-- [ ] flask based user interface
-
-automatic email notification of post failures - Add an automatic SNS notification sent when a post fails
-
-automated video formatting -Incorporate the upload media functionality into
-a separate lambda function attached to the media bucket, that automatically formats the
-videos upon upload. Instagram limits videos to 1 minute in length, Twitter allows 2 minutes and 20 seconds, 
-and Facebook longer still. Currently, and Instagram post will simply fail if the video is longer than 1 minute.
-I will be adding functionality to break Instagram video in up to 3 segments of 1 minute length, and post them individually. 
-
-monthly reposting option - Currently you are able to schedule a repost in one year. Functionality will be added to allow
-monthly reposting as well
-
-automated daily log report - a separate lambda function that scans the logs daily, and
-delivers an email report showing todays post, and any post failures
-
-flask based user interface - a Flask based module that will display upcoming post, and
-provide an interface for adding, deleting, or editing posts
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- LICENSE -->
@@ -173,7 +105,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Noel Alderman - [@vintageeurocars](https://twitter.com/twitter_handle) - noele952@gmail.com
 
-Project Link: [https://github.com/noele952/social-media-autoloader](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/noele952/social-media-autoloader](https://github.com/noele952/social-media-autoloader)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

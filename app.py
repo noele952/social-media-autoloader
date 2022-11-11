@@ -1,5 +1,3 @@
-from dotenv import load_dotenv
-load_dotenv()
 from instagram import Instagram
 from facebook import Facebook
 from twitter import Tweet
