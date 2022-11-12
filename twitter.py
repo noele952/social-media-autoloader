@@ -23,7 +23,7 @@ class Tweet:
         self.media = None
         self.media_id = None
         self.media_ids = []
-        self.aws_parameter_name = PARAMETER_NAME_TWITTER
+        self.aws_parameter_name = '/' + PARAMETER_NAME_TWITTER
         self.api_key = TWITTER_API_KEY
         self.api_secret = TWITTER_API_SECRET
         self.auth = self.authenticate()
@@ -76,6 +76,7 @@ class Tweet:
                 "media": data,
                 "media_category": "tweet_image"
             }
+            print(payload)
             response = requests.post('https://upload.twitter.com/1.1/media/upload.json', auth=self.auth,
                                      files=payload).json()
             self.media_ids.append(str(response['media_id']))

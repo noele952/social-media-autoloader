@@ -30,6 +30,7 @@ class Facebook:
             "url": self.media_url + self.media[0],
             "access_token": FB_ACCESS_TOKEN,
         }
+        print(payload)
         response = requests.post(self.photos_endpoint, params=payload).json()
         self.post_receipt = response
 
@@ -39,6 +40,7 @@ class Facebook:
             "file_url": self.media_url + self.media[0],
             "access_token": self.access_token,
         }
+        print(payload)
         response = requests.post(self.videos_endpoint, params=payload).json()
         self.post_receipt = response
 
@@ -49,11 +51,13 @@ class Facebook:
                 "access_token": FB_ACCESS_TOKEN,
             }
             requests.post(self.photos_endpoint, params=payload).json()
+            print(payload)
         payload = {
             "message": self.text,
             "url": self.media_url + self.media[0],
             "access_token": FB_ACCESS_TOKEN,
         }
+        print(payload)
         response = requests.post(self.photos_endpoint, params=payload).json()
         print(response)
         self.post_receipt = response

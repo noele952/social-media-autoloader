@@ -88,7 +88,9 @@ def make_post(post_record):
 
 
 def lambda_handler(event, context):
+    print(event)
     for record in event['Records']:
+        print(record)
         try:
             post_record = record['dynamodb']['OldImage']
             print(f"post_record: {post_record}")

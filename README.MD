@@ -58,7 +58,10 @@ Twitter. It can handle posts including a picture, a gallery of pictures, or a vi
 
 It works off of the DynamoDB Time To Live feature. The post date is used as the TTL. When the post expires the 
 DyanamoDB stream will trigger the Lambda function to post, and if marked repost it will put it back into the 
-post database
+post database.
+
+The Time To Live feature is not instantaneous. It usually takes about 10-15 minutes for the expired data to show up in
+the stream, sometimes longer. 
 
 It also includes a Hashtag table for instagram posts, where you can store a collection of hashtags assigned to a keyword,
 and then use those keywords to assign hashtags. If multiple keywords are used on a post, it

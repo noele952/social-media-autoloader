@@ -67,7 +67,7 @@ Resources:
         AttributeName: posttime_epoch
         Enabled: True
       StreamSpecification:
-        StreamViewType: NEW_IMAGE
+        StreamViewType: NEW_AND_OLD_IMAGES
   HashtagTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -97,7 +97,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
-      Handler: app.lambdaHandler
+      Handler: app.lambda_handler
       Runtime: python3.9
       Timeout: 300
       MemorySize: 1024
@@ -106,6 +106,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: "*"
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref PARAMETERNAMETWITTER
       Events:
         DynamoDBPost:
           Type: DynamoDB
@@ -113,7 +115,9 @@ Resources:
             Stream: !GetAtt PostTable.StreamArn
             BatchSize: 10
             StartingPosition: LATEST
-
+            FilterCriteria:
+              Filters:
+                - Pattern: '{ "userIdentity": { "type": ["Service"], "principalId": ["dynamodb.amazonaws.com"] } }'
 
 Outputs:
   PostTable:
